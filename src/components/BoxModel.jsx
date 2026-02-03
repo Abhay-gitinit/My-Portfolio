@@ -61,6 +61,20 @@ function BoxModel({
   
   const { scene } = useGLTF("/models/box_portfolio.glb")
 
+  const resolvePanelFromObject = (obj) => {
+  // Direct panel click
+  if (obj.userData.isPanel) {
+    return obj.userData.panelName
+  }
+
+  // Icon part click → map to panel
+  if (obj.userData.iconRoot) {
+    return `${obj.userData.iconRoot}_Panel`
+  }
+
+  return null
+}
+
   /* =========================
      HELPERS
   ========================= */
@@ -377,20 +391,22 @@ if (label && clock.elapsedTime > labelVisibleUntil.current) {
           setLabelOpacity(0)
         }}
         onClick={(e) => {
-          e.stopPropagation()
+  e.stopPropagation()
 
-          if (e.object.userData.isPortal) {
-            isFlipping.current = true
-            flipProgress.current = 0
-            onPortalActivate?.()
-            setTheme((prev) => (prev === "light" ? "dark" : "light"))
-            return
-          }
+  if (e.object.userData.isPortal) {
+    isFlipping.current = true
+    flipProgress.current = 0
+    onPortalActivate?.()
+    setTheme((prev) => (prev === "light" ? "dark" : "light"))
+    return
+  }
 
-          if (!e.object.userData.isPanel) return
-          selectedPanel.current = e.object.userData.panelName
-          setActivePanel(e.object.userData.panelName)
-        }}
+  const panelName = resolvePanelFromObject(e.object)
+  if (!panelName) return
+
+  selectedPanel.current = panelName
+  setActivePanel(panelName)
+}}
       />
     </group>
   )
