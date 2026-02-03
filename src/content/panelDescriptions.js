@@ -24,7 +24,7 @@ export const PANEL_DESCRIPTIONS = {
     description:
       "A production-style healthcare booking platform using React, Express, MongoDB, and JWT-based RBAC, where appointments are dynamically validated against approved schedules. Admins control approvals, prevent conflicts, and enforce availability rules, while patients receive smart fallback dates. Built to mirror real hospital scheduling logic—not demo-level CRUD.",
     links: {
-      github: "https://github.com/Ayanokojl/hospital-server"
+      github: "https://github.com/Ayanokojl/Hospital-Management-System"
     }
   },
 
