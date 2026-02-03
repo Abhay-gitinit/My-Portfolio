@@ -1,0 +1,208 @@
+/* ===========================
+   GLOBAL BASE (UNCHANGED)
+=========================== */
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+body {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ===========================
+   TERMINAL / PORTAL EFFECTS
+=========================== */
+
+.terminal-glitch-out {
+  animation: glitchOut 0.4s steps(2) forwards;
+  position: relative;
+}
+
+@keyframes glitchOut {
+  0% {
+    transform: translateX(0);
+    filter: none;
+    clip-path: inset(0 0 0 0);
+  }
+  20% {
+    transform: translateX(-2px);
+    filter: drop-shadow(2px 0 red) drop-shadow(-2px 0 cyan);
+    clip-path: inset(0 0 60% 0);
+  }
+  40% {
+    transform: translateX(3px);
+    clip-path: inset(30% 0 20% 0);
+  }
+  60% {
+    transform: translateX(-3px);
+    filter: drop-shadow(-2px 0 lime);
+    clip-path: inset(10% 0 40% 0);
+  }
+  80% {
+    transform: translateX(2px);
+    clip-path: inset(50% 0 10% 0);
+  }
+  100% {
+    transform: translateX(0);
+    filter: none;
+    clip-path: inset(100% 0 0 0);
+  }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ===========================
+   ICON ENTRY (GLITCH IN)
+=========================== */
+
+.icon-glitch-in {
+  opacity: 0;
+  transform: translateY(10px) scale(0.9);
+  animation: iconGlitchIn 0.45s ease-out forwards;
+}
+
+@keyframes iconGlitchIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+    filter: drop-shadow(2px 0 red);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1);
+    filter: drop-shadow(-2px 0 cyan);
+  }
+
+  70% {
+    filter: drop-shadow(0 0 8px rgba(34,197,94,0.7));
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: none;
+  }
+}
+
+/* ===========================
+   ICON HOVER GLITCH
+=========================== */
+
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.icon-glitch-hover {
+  transform: scale(1.18);
+}
+
+.icon-glitch-hover .icon-inner {
+  animation: iconGlitch 0.35s steps(2);
+}
+
+@keyframes iconGlitch {
+  0% {
+    transform: translate(0);
+    text-shadow: none;
+  }
+  20% {
+    transform: translate(-2px, 0);
+    text-shadow: 2px 0 red;
+  }
+  40% {
+    transform: translate(2px, 0);
+    text-shadow: -2px 0 cyan;
+  }
+  60% {
+    transform: translate(-1px, 1px);
+    text-shadow: 1px -1px lime;
+  }
+  100% {
+    transform: translate(0);
+    text-shadow: none;
+  }
+}
+
+/* ===========================
+   LINKS / BUTTONS (UNCHANGED)
+=========================== */
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* ===========================
+   LIGHT MODE
+=========================== */
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}
