@@ -1,12 +1,6 @@
-import { Canvas } from "@react-three/fiber"
-import { OrbitControls, ContactShadows } from "@react-three/drei"
-import {
-  useRef,
-  useState,
-  useLayoutEffect,
-  Suspense,
-  useEffect
-} from "react"
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, ContactShadows } from "@react-three/drei";
+import { useRef, useState, useLayoutEffect, Suspense, useEffect } from "react";
 
 import {
   FaGithub,
@@ -17,180 +11,166 @@ import {
   FaMedium,
   FaInstagram,
   FaLinkedin,
-  FaPlayCircle
-} from "react-icons/fa"
+  FaPlayCircle,
+  FaFileDownload,
+} from "react-icons/fa";
 
-import * as THREE from "three"
+import * as THREE from "three";
 
-import BoxModel from "./components/BoxModel"
-import AnimatedBackground from "./components/AnimatedBackground"
-import PortalOverlay from "./components/PortalOverlay"
-import { TypingLine } from "./components/TerminalsUI"
-import { PANEL_DESCRIPTIONS } from "./content/panelDescriptions"
-import HackerText from "./components/HackerText"
-import GlitchText from "./components/GlitchText"
+import BoxModel from "./components/BoxModel";
+import AnimatedBackground from "./components/AnimatedBackground";
+import PortalOverlay from "./components/PortalOverlay";
+import { TypingLine } from "./components/TerminalsUI";
+import { PANEL_DESCRIPTIONS } from "./content/panelDescriptions";
+import HackerText from "./components/HackerText";
+import GlitchText from "./components/GlitchText";
 
-import IconLink from "./components/IconLink"
+import IconLink from "./components/IconLink";
 
 export default function App() {
   /* =======================
      STATE
   ======================= */
-  const [hoverLabel, setHoverLabel] = useState("")
-  const [labelOpacity, setLabelOpacity] = useState(0)
-  const [activePanel, setActivePanel] = useState(null)
-  const [theme, setTheme] = useState("dark")
-  const content = PANEL_DESCRIPTIONS[activePanel]
-  const links = content?.links || {}
-  
-  const [showIcons, setShowIcons] = useState(false)
+  const RESUME_URL = "/resume.pdf";
 
-  
+  const [hoverLabel, setHoverLabel] = useState("");
+  const [labelOpacity, setLabelOpacity] = useState(0);
+  const [activePanel, setActivePanel] = useState(null);
+  const [theme, setTheme] = useState("light");
+  const content = PANEL_DESCRIPTIONS[activePanel];
+  const links = content?.links || {};
+
+  const [showIcons, setShowIcons] = useState(false);
+
   // Portal flow
-  const [portalStage, setPortalStage] = useState("idle")
+  const [portalStage, setPortalStage] = useState("idle");
   // idle → connecting → connected → entering → collapsing → black → reveal
-  const lastThemeRef = useRef(theme)
+  const lastThemeRef = useRef(theme);
 
   const ICON_MAP = {
-  prototype:FaPlayCircle,
-  github: FaGithub,
-  email: FaEnvelope,
-  discord: FaDiscord,
-  twitter: FaTwitter,
-  youtube: FaYoutube,
-  medium: FaMedium,
-  instagram: FaInstagram,
-  linkedin: FaLinkedin
-}
+    prototype: FaPlayCircle,
+    github: FaGithub,
+    email: FaEnvelope,
+    discord: FaDiscord,
+    twitter: FaTwitter,
+    youtube: FaYoutube,
+    medium: FaMedium,
+    instagram: FaInstagram,
+    linkedin: FaLinkedin,
+  };
 
-  /* =======================
-     TERMINAL LOG STATE (NEW)
-  ======================= */
-  // App.jsx
-const [terminalLogs, setTerminalLogs] = useState([
-  {
-    id: Date.now(),
-    text: "PS C:\Abhay> WELCOME TO THE PORTFOLIO",
-    removing: false
-  }
-])
+  /* TERMINAL LOG STATE */
+  const [terminalLogs, setTerminalLogs] = useState([
+    {
+      id: Date.now(),
+      text: "PS C:\Abhay> WELCOME TO THE PORTFOLIO",
+      removing: false,
+    },
+  ]);
   const addTerminalLog = (text) => {
-  const newLog = {
-    id: Date.now(),
-    text,
-    removing: false
-  }
+    const newLog = {
+      id: Date.now(),
+      text,
+      removing: false,
+    };
 
-  setTerminalLogs((prev) => {
-    const logs = [...prev, newLog]
+    setTerminalLogs((prev) => {
+      const logs = [...prev, newLog];
 
-    // 🚫 keep max 10 logs
-    if (logs.length > 6) {
-      const oldest = logs[0]
-      logs[0] = { ...oldest, removing: true }
+      // keep max 10 logs
+      if (logs.length > 6) {
+        const oldest = logs[0];
+        logs[0] = { ...oldest, removing: true };
 
-      // remove AFTER fade animation
-      setTimeout(() => {
-        setTerminalLogs((current) =>
-          current.filter((l) => l.id !== oldest.id)
-        )
-      }, 400)
-    }
+        // remove AFTER fade animation
+        setTimeout(() => {
+          setTerminalLogs((current) =>
+            current.filter((l) => l.id !== oldest.id),
+          );
+        }, 400);
+      }
 
-    return logs
-  })
-}
+      return logs;
+    });
+  };
 
-  /* =======================
-     BACKGROUND COLORS
-  ======================= */
-  const bgColor = useRef(new THREE.Color("#f2f4ff"))
-  const targetBgColor = useRef(new THREE.Color("#f2f4ff"))
+  /* BACKGROUND COLORS */
+  const bgColor = useRef(new THREE.Color("#f2f4ff"));
+  const targetBgColor = useRef(new THREE.Color("#f2f4ff"));
 
   useLayoutEffect(() => {
-    targetBgColor.current.set(
-      theme === "dark" ? "rgb(0, 0, 0)" : "#f2f4ff"
-    )
-  }, [theme])
+    targetBgColor.current.set(theme === "dark" ? "rgb(0, 0, 0)" : "#f2f4ff");
+  }, [theme]);
 
-  /* =======================
-     PORTAL SOUND
-  ======================= */
-  const portalSoundRef = useRef(null)
+  /* PORTAL SOUND */
+  const portalSoundRef = useRef(null);
 
   useEffect(() => {
-    portalSoundRef.current = new Audio("/sounds/portal-whoosh.mp3")
-    portalSoundRef.current.volume = 0.7
-  }, [])
+    portalSoundRef.current = new Audio("/sounds/portal-whoosh.mp3");
+    portalSoundRef.current.volume = 0.7;
+  }, []);
 
   useEffect(() => {
-  setShowIcons(false)
-}, [activePanel])
+    setShowIcons(false);
+  }, [activePanel]);
 
   const playPortalSound = () => {
-    if (!portalSoundRef.current) return
-    portalSoundRef.current.currentTime = 0
-    portalSoundRef.current.play().catch(() => {})
-  }
+    if (!portalSoundRef.current) return;
+    portalSoundRef.current.currentTime = 0;
+    portalSoundRef.current.play().catch(() => {});
+  };
 
-  /* =======================
-     PAGE IDENTITY
-  ======================= */
+  /* PAGE IDENTITY */
   useEffect(() => {
-    document.title = "Abhay — Portfolio"
-  }, [])
+    document.title = "Abhay — Portfolio";
+  }, []);
 
   useEffect(() => {
-  setShowIcons(false)
-}, [activePanel])
+    setShowIcons(false);
+  }, [activePanel]);
 
-  /* =======================
-     TERMINAL LOG TRACKER (NEW)
-  ======================= */
-useEffect(() => {
-  if (portalStage !== "reveal") return
+  /* TERMINAL LOG TRACKER */
+  useEffect(() => {
+    if (portalStage !== "reveal") return;
 
-  let location = "Idle"
-  if (activePanel) {
-    location = activePanel
-      .replace("_Panel", "")
-      .replace(/_/g, "-")
-  }
-  
+    let location = "Idle";
+    if (activePanel) {
+      location = activePanel.replace("_Panel", "").replace(/_/g, "-");
+    }
 
-  addTerminalLog(`PS C:\Abhay> ${location}`)
-}, [activePanel, portalStage])
+    addTerminalLog(`PS C:\Abhay> ${location}`);
+  }, [activePanel, portalStage]);
 
-useEffect(() => {
-  if (portalStage !== "reveal") return
-  if (lastThemeRef.current === theme) return
+  useEffect(() => {
+    if (portalStage !== "reveal") return;
+    if (lastThemeRef.current === theme) return;
 
-  lastThemeRef.current = theme
-  addTerminalLog("PS C:\Abhay> STEPPING THROUGH PORTAL...")
-}, [theme, portalStage])
+    lastThemeRef.current = theme;
+    addTerminalLog("PS C:\Abhay> STEPPING THROUGH PORTAL...");
+  }, [theme, portalStage]);
   return (
-    /* 🖤 STATIC BLACK BACKDROP */
+    /*  STATIC BLACK BACKDROP */
     <div
       style={{
         position: "fixed",
         inset: 0,
         background: "black",
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
-      {/* 🎥 SHAKING / COLLAPSING LAYER */}
+      {/*  SHAKING / COLLAPSING LAYER */}
       <div
         className={
           portalStage === "collapsing"
             ? "collapse"
             : portalStage === "black"
-            ? "black-frame"
-            : ""
+              ? "black-frame"
+              : ""
         }
         style={{
           width: "100%",
           height: "100%",
-          position: "relative"
+          position: "relative",
         }}
       >
         {/* =======================
@@ -238,70 +218,65 @@ useEffect(() => {
              PERMANENT TERMINAL LOG (NEW)
         ======================= */}
         {portalStage === "reveal" && (
-  <div
-    style={{
-      position: "absolute",
-      top: 24,
-      left: 24,
-      width: "360px",
-      maxHeight: "70vh",
-      overflowY: "auto",
+          <div
+            style={{
+              position: "absolute",
+              top: 24,
+              left: 24,
+              width: "360px",
+              maxHeight: "70vh",
+              overflowY: "auto",
 
-      fontFamily: "monospace",
-      fontSize: 14,
-      lineHeight: 1.4,
+              fontFamily: "monospace",
+              fontSize: 14,
+              lineHeight: 1.4,
 
-      color: theme === "dark" ? "#22c55e" : "#020617",
+              color: theme === "dark" ? "#22c55e" : "#020617",
 
-      background: "transparent",   // ✅ removed
-      border: "none",              // ✅ removed
-      boxShadow: "none",           // ✅ removed
-      padding: 0,                  // ✅ optional (keep 8 if you want spacing)
+              background: "transparent",
+              border: "none",
+              boxShadow: "none",
+              padding: 0,
 
-      pointerEvents: "none"         // feels more “HUD-like”
-    }}
-  >
+              pointerEvents: "none", // feels more “HUD-like”
+            }}
+          >
             {terminalLogs.map((log, i) => (
-  <TypingLine
-    key={log.id}
-    text={log.text}
-    removing={log.removing}
-    isLast={i === terminalLogs.length - 1}
-    theme={theme}
-  />
-))}
+              <TypingLine
+                key={log.id}
+                text={log.text}
+                removing={log.removing}
+                isLast={i === terminalLogs.length - 1}
+                theme={theme}
+              />
+            ))}
           </div>
         )}
 
-        {/* =======================
-             PORTAL / TERMINAL OVERLAY
-        ======================= */}
+        {/* PORTAL / TERMINAL OVERLAY */}
         <PortalOverlay
           stage={portalStage}
           onEnter={() => setPortalStage("connecting")}
           onConnected={() => {
-            setPortalStage("connected")
-            setTimeout(() => setPortalStage("entering"), 400)
+            setPortalStage("connected");
+            setTimeout(() => setPortalStage("entering"), 400);
           }}
           onReveal={() => {
-            setPortalStage("collapsing")
+            setPortalStage("collapsing");
 
             setTimeout(() => {
-              setPortalStage("black")
-            }, 600)
+              setPortalStage("black");
+            }, 600);
 
             setTimeout(() => {
-              setPortalStage("reveal")
-            }, 900)
+              setPortalStage("reveal");
+            }, 900);
           }}
           onPortalSound={playPortalSound}
         />
 
-        {/* =======================
-             HOVER LABEL
-        ======================= */}
+        {/* HOVER LABEL */}
         <div
-        
           style={{
             position: "absolute",
             bottom: 60,
@@ -312,108 +287,125 @@ useEffect(() => {
             fontWeight: 600,
             pointerEvents: "none",
             color: theme === "dark" ? "#f8fafc" : "#334155",
-            transition: "opacity 0.25s ease, transform 0.25s ease"
+            transition: "opacity 0.25s ease, transform 0.25s ease",
           }}
         >
           {hoverLabel}
         </div>
 
-        {/* =======================
-     DESCRIPTION TEXT (NO CARD)
-======================= */}
-<div
-  style={{
-    position: "absolute",
-    top: "50%",
-    right: 40,
-    transform: activePanel
-      ? "translateY(-50%) translateX(0)"
-      : "translateY(-50%) translateX(120%)",
-    transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
-    zIndex: 5,
-    pointerEvents: "auto",
-    maxWidth: 420
-  }}
->
- {content && (
-  <>
-    <GlitchText
-  text={content.title}
-  duration={700}
-  randomGlitch
-  minDelay={1000}
-  maxDelay={2000}
-  style={{
-    fontSize: 28,
-    fontWeight: 700,
-    color: theme === "dark" ? "#f8fafc" : "#0f172a",
-    marginBottom: 12
-  }}
-/>
+        {/* DESCRIPTION TEXT */}
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            right: 40,
+            transform: activePanel
+              ? "translateY(-50%) translateX(0)"
+              : "translateY(-50%) translateX(120%)",
+            transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
+            zIndex: 5,
+            pointerEvents: "auto",
+            maxWidth: 420,
+          }}
+        >
+          {content && (
+            <>
+              <GlitchText
+                text={content.title}
+                duration={700}
+                randomGlitch
+                minDelay={1000}
+                maxDelay={2000}
+                style={{
+                  fontSize: 28,
+                  fontWeight: 700,
+                  color: theme === "dark" ? "#f8fafc" : "#0f172a",
+                  marginBottom: 12,
+                }}
+              />
 
-    <HackerText
-    key={activePanel}
-  text={content.description}
-  mode="scramble"
-  speed={8}
-  scrambleRounds={4}
-  onComplete={() => {
-  setShowIcons(true)
-}}
-  style={{
-    fontSize: 16,
-    lineHeight: 1.6,
-    fontFamily: "monospace",
-    color: theme === "dark" ? "#cbd5f5" : "#475569",
-    whiteSpace: "pre-wrap"
-  }}
-/>
+              <HackerText
+                key={activePanel}
+                text={content.description}
+                mode="scramble"
+                speed={8}
+                scrambleRounds={4}
+                onComplete={() => {
+                  setShowIcons(true);
+                }}
+                style={{
+                  fontSize: 16,
+                  lineHeight: 1.6,
+                  fontFamily: "monospace",
+                  color: theme === "dark" ? "#cbd5f5" : "#475569",
+                  whiteSpace: "pre-wrap",
+                }}
+              />
 
-{showIcons && (
-  <div
-    style={{
-      marginTop: 20,
-      display: "flex",
-      justifyContent: "flex-start",
-      gap: 20,
-    }}
-  >
-    {Object.entries(links).map(([key, href], index) => {
-  const Icon = ICON_MAP[key]
-  if (!Icon) return null
+              {showIcons && (
+                <div
+                  style={{
+                    marginTop: 20,
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    gap: 20,
+                  }}
+                >
+                  {Object.entries(links).map(([key, href], index) => {
+                    const Icon = ICON_MAP[key];
+                    if (!Icon) return null;
 
-  const sizeMultiplier =
-        key === "github" ? 1.4 :
-        key === "email" ? 1.4 :
-        key === "instagram" ? 1.4 : 
-        key === "linkedin" ? 1.4 :
-        key === "prototype" ? 1.4 :
-        1
+                    const sizeMultiplier =
+                      key === "github"
+                        ? 1.4
+                        : key === "email"
+                          ? 1.4
+                          : key === "instagram"
+                            ? 1.4
+                            : key === "linkedin"
+                              ? 1.4
+                              : key === "prototype"
+                                ? 1.4
+                                : 1;
 
-  return (
-    <IconLink
-      key={key}
-      href={href}
-      icon={<Icon />}   // ✅ render here
-      theme={theme}
-      sizeMultiplier={sizeMultiplier}
-      glitch
-      delay={index * 80}
-    />
-  )
-})}
-  </div>
-)}
+                    return (
+                      <IconLink
+                        key={key}
+                        href={href}
+                        icon={<Icon />}
+                        theme={theme}
+                        sizeMultiplier={sizeMultiplier}
+                        glitch
+                        delay={index * 80}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+        {/* RESUME CTA */}
+        {portalStage === "reveal" && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: 40,
+              left: 60,
+            }}
+          >
+            <IconLink
+              href={RESUME_URL}
+              icon={<FaFileDownload />}
+              theme={theme}
+              sizeMultiplier={1.4}
+              glitch
+              delay={200}
+            />
+          </div>
+        )}
 
-
-  </>
-)}
-</div>
-        
-
-        {/* =======================
-             CSS ANIMATIONS
-        ======================= */}
+        {/* CSS ANIMATIONS */}
         <style>
           {`
             @keyframes vertical-collapse {
@@ -434,5 +426,5 @@ useEffect(() => {
         </style>
       </div>
     </div>
-  )
+  );
 }

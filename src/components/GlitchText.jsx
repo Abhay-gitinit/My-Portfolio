@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react";
 
-const GLITCH_CHARS = "!@#$%^&*()_+-=[]{}<>?/\\|"
+const GLITCH_CHARS = "!@#$%^&*()_+-=[]{}<>?/\\|";
 
 export default function GlitchText({
   text,
@@ -8,69 +8,66 @@ export default function GlitchText({
   randomGlitch = true,
   minDelay = 2000,
   maxDelay = 6000,
-  style
+  style,
 }) {
-  const [display, setDisplay] = useState(text)
-  const [glitching, setGlitching] = useState(false)
+  const [display, setDisplay] = useState(text);
+  const [glitching, setGlitching] = useState(false);
 
-  const originalTextRef = useRef(text)
-  const timerRef = useRef(null)
+  const originalTextRef = useRef(text);
+  const timerRef = useRef(null);
 
-  // 🔥 CORE GLITCH (full text, never cuts)
+  // CORE GLITCH
   const runGlitch = (frames = 8, intensity = 0.3) => {
-    setGlitching(true)
-    let frame = 0
+    setGlitching(true);
+    let frame = 0;
 
     const interval = setInterval(() => {
-      frame++
+      frame++;
 
       if (frame >= frames) {
-        clearInterval(interval)
-        setDisplay(originalTextRef.current)
-        setGlitching(false)
-        return
+        clearInterval(interval);
+        setDisplay(originalTextRef.current);
+        setGlitching(false);
+        return;
       }
 
       const corrupted = originalTextRef.current
         .split("")
         .map((c) => {
-          if (c === " ") return " "
+          if (c === " ") return " ";
           return Math.random() < intensity
-            ? GLITCH_CHARS[
-                Math.floor(Math.random() * GLITCH_CHARS.length)
-              ]
-            : c
+            ? GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
+            : c;
         })
-        .join("")
+        .join("");
 
-      setDisplay(corrupted)
-    }, 40)
-  }
+      setDisplay(corrupted);
+    }, 40);
+  };
 
-  // 🧨 INTRO GLITCH (on text change)
+  // INTRO GLITCH
   useEffect(() => {
-    originalTextRef.current = text
-    setDisplay(text)
-    runGlitch(Math.floor(duration / 40), 0.4)
-  }, [text, duration])
+    originalTextRef.current = text;
+    setDisplay(text);
+    runGlitch(Math.floor(duration / 40), 0.4);
+  }, [text, duration]);
 
-  // 🌀 RANDOM AMBIENT GLITCHES
+  // RANDOM AMBIENT GLITCHES
   useEffect(() => {
-    if (!randomGlitch) return
+    if (!randomGlitch) return;
 
     const loop = () => {
-      const delay =
-        Math.random() * (maxDelay - minDelay) + minDelay
+      const delay = Math.random() * (maxDelay - minDelay) + minDelay;
 
       timerRef.current = setTimeout(() => {
-        runGlitch(5, 0.25) // subtle pulse
-        loop()
-      }, delay)
-    }
+        runGlitch(5, 0.25); // subtle pulse
+        loop();
+      }, delay);
+    };
 
-    loop()
-    return () => clearTimeout(timerRef.current)
-  }, [randomGlitch, minDelay, maxDelay])
+    loop();
+    return () => clearTimeout(timerRef.current);
+  }, [randomGlitch, minDelay, maxDelay]);
 
   return (
     <span
@@ -85,10 +82,10 @@ export default function GlitchText({
           `
           : "none",
         transition: "text-shadow 0.2s ease",
-        ...style
+        ...style,
       }}
     >
       {display}
     </span>
-  )
+  );
 }

@@ -1,116 +1,113 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react";
 
-const PROMPT = "PS C:\Abhay> "
-const GREEN = "#22c55e"
-const YELLOW = "#facc15"
+const PROMPT = "PS C:\Abhay> ";
+const GREEN = "#22c55e";
+const YELLOW = "#facc15";
 
-const GLITCH_CHARS = "!@#$%^&*()_+-=[]{}<>?/\\|"
+const GLITCH_CHARS = "!@#$%^&*()_+-=[]{}<>?/\\|";
 
 export default function PortalOverlay({
   stage,
   onEnter,
   onConnected,
-  onReveal
+  onReveal,
 }) {
   if (stage === "collapsing" || stage === "black" || stage === "reveal") {
-    return null
+    return null;
   }
 
-  const [locked, setLocked] = useState(false)
-  const [lines, setLines] = useState([])
-  const [glitchOut, setGlitchOut] = useState(false)
+  const [locked, setLocked] = useState(false);
+  const [lines, setLines] = useState([]);
+  const [glitchOut, setGlitchOut] = useState(false);
 
-  const lockSoundRef = useRef(null)
+  const lockSoundRef = useRef(null);
 
-  const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
   /* =======================
      FAST SCRAMBLED TYPE-IN
      (1.8x speed)
   ======================= */
   const typeLine = async (text, color) => {
-    let visible = ""
-    let charCount = 0
-    let lineIndex
+    let visible = "";
+    let charCount = 0;
+    let lineIndex;
 
     setLines((prev) => {
-      lineIndex = prev.length
-      return [...prev, { text: "", color }]
-    })
+      lineIndex = prev.length;
+      return [...prev, { text: "", color }];
+    });
 
-    await wait(0)
+    await wait(0);
 
     for (let i = 0; i < text.length; i++) {
       // tighter scramble burst
       for (let s = 0; s < 2; s++) {
         const scrambled =
           visible +
-          GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
+          GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
 
         setLines((prev) =>
           prev.map((l, idx) =>
-            idx === lineIndex ? { ...l, text: scrambled } : l
-          )
-        )
+            idx === lineIndex ? { ...l, text: scrambled } : l,
+          ),
+        );
 
-        await wait(7) // ⬅️ was 12ms
+        await wait(7); // ⬅️ was 12ms
       }
 
-      visible += text[i]
-      charCount++
+      visible += text[i];
+      charCount++;
 
       // 🔊 key-lock every 4 chars
       if (charCount % 4 === 0 && lockSoundRef.current) {
-        lockSoundRef.current.currentTime = 0
-        lockSoundRef.current.play().catch(() => {})
+        lockSoundRef.current.currentTime = 0;
+        lockSoundRef.current.play().catch(() => {});
       }
 
       setLines((prev) =>
-        prev.map((l, idx) =>
-          idx === lineIndex ? { ...l, text: visible } : l
-        )
-      )
+        prev.map((l, idx) => (idx === lineIndex ? { ...l, text: visible } : l)),
+      );
 
-      await wait(10) // ⬅️ was 18ms
+      await wait(10); // ⬅️ was 18ms
     }
-  }
+  };
 
   /* =======================
      TERMINAL SEQUENCE
   ======================= */
   useEffect(() => {
     if (stage === "connecting") {
-      setLines([])
-      setGlitchOut(false)
+      setLines([]);
+      setGlitchOut(false);
+      (async () => {
+        await typeLine("CONNECTION TO PORTAL : PENDING", YELLOW);
+        await wait(200);
 
-      ;(async () => {
-        await typeLine("CONNECTION TO PORTAL : PENDING", YELLOW)
-        await wait(200)
+        await typeLine("CONNECTION TO PORTAL : SUCCESSFUL", GREEN);
+        await wait(300);
 
-        await typeLine("CONNECTION TO PORTAL : SUCCESSFUL", GREEN)
-        await wait(300)
-
-        onConnected?.()
-      })()
+        onConnected?.();
+      })();
     }
 
     if (stage === "entering") {
-      ;(async () => {
-        await typeLine("SYSTEM ONLINE", GREEN)
-        await wait(200)
+      (async () => {
+        await typeLine("SYSTEM ONLINE", GREEN);
+        await wait(200);
 
-        await typeLine("IDENTITY CONFIRMED : ABHAY", GREEN)
+        await typeLine("IDENTITY CONFIRMED : ABHAY", GREEN);
 
-        await wait(400) // cursor blink pause
+        await wait(400); // cursor blink pause
 
         // 💥 global glitch-out
-        setGlitchOut(true)
+        setGlitchOut(true);
 
-        await wait(225)
-        onReveal?.()
-      })()
+        await wait(225);
+        onReveal?.();
+      })();
     }
-  }, [stage])
+  }, [stage]);
 
   /* =======================
      RENDER
@@ -127,15 +124,15 @@ export default function PortalOverlay({
           justifyContent: "center",
           background: "black",
           fontFamily: "ui-monospace, monospace",
-          pointerEvents: stage === "idle" ? "auto" : "none"
+          pointerEvents: stage === "idle" ? "auto" : "none",
         }}
       >
         {stage === "idle" && (
           <button
             disabled={locked}
             onClick={() => {
-              setLocked(true)
-              onEnter?.()
+              setLocked(true);
+              onEnter?.();
             }}
             style={{
               padding: "18px 44px",
@@ -147,7 +144,7 @@ export default function PortalOverlay({
               background: "rgba(34,197,94,0.08)",
               border: "1px solid rgba(34,197,94,0.6)",
               borderRadius: 12,
-              boxShadow: "0 0 30px rgba(34,197,94,0.4)"
+              boxShadow: "0 0 30px rgba(34,197,94,0.4)",
             }}
           >
             ENTER THE PORTAL
@@ -162,7 +159,7 @@ export default function PortalOverlay({
               lineHeight: 1.4,
               display: "flex",
               flexDirection: "column",
-              gap: 2
+              gap: 2,
             }}
           >
             {lines.map((line, i) => (
@@ -174,7 +171,7 @@ export default function PortalOverlay({
                     className="cursor"
                     style={{
                       marginLeft: 6,
-                      animation: "blink 1s steps(1) infinite"
+                      animation: "blink 1s steps(1) infinite",
                     }}
                   >
                     ▮
@@ -186,11 +183,7 @@ export default function PortalOverlay({
         )}
       </div>
 
-      <audio
-        ref={lockSoundRef}
-        src="/sounds/key-lock.mp3"
-        preload="auto"
-      />
+      <audio ref={lockSoundRef} src="/sounds/key-lock.mp3" preload="auto" />
     </>
-  )
+  );
 }

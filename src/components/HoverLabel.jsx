@@ -12,10 +12,10 @@ export default function HoverLabel({ text, opacity, theme }) {
         pointerEvents: "none",
         color: theme === "dark" ? "#f8fafc" : "#334155",
         transition:
-          "opacity 0.25s ease, transform 0.25s ease, text-shadow 0.3s ease"
+          "opacity 0.25s ease, transform 0.25s ease, text-shadow 0.3s ease",
       }}
     >
       {text}
     </div>
-  )
+  );
 }

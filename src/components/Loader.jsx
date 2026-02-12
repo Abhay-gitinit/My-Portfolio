@@ -1,7 +1,7 @@
-import { Html, useProgress } from "@react-three/drei"
+import { Html, useProgress } from "@react-three/drei";
 
 export default function Loader() {
-  const { active, progress } = useProgress()
+  const { active, progress } = useProgress();
 
   return (
     active && (
@@ -20,7 +20,7 @@ export default function Loader() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: 12
+            gap: 12,
           }}
         >
           {/* Spinner */}
@@ -31,7 +31,7 @@ export default function Loader() {
               borderRadius: "50%",
               border: "3px solid rgba(255,255,255,0.2)",
               borderTopColor: "#6b7cff",
-              animation: "spin 1s linear infinite"
+              animation: "spin 1s linear infinite",
             }}
           />
 
@@ -48,5 +48,5 @@ export default function Loader() {
         </div>
       </Html>
     )
-  )
+  );
 }

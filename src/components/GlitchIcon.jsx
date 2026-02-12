@@ -1,4 +1,3 @@
-// GlitchIcon.jsx
 export default function GlitchIcon({ href, children, delay = 0 }) {
   return (
     <a
@@ -7,10 +6,10 @@ export default function GlitchIcon({ href, children, delay = 0 }) {
       rel="noopener noreferrer"
       className="icon-glitch-in"
       style={{
-        animationDelay: `${delay}ms`
+        animationDelay: `${delay}ms`,
       }}
     >
       {children}
     </a>
-  )
+  );
 }

@@ -1,6 +1,4 @@
-/* ===========================
-   GLOBAL BASE (UNCHANGED)
-=========================== */
+/*  GLOBAL BASE (UNCHANGED) */
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -32,9 +30,7 @@ body {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-/* ===========================
-   TERMINAL / PORTAL EFFECTS
-=========================== */
+/* TERMINAL / PORTAL EFFECTS */
 
 .terminal-glitch-out {
   animation: glitchOut 0.4s steps(2) forwards;
@@ -73,13 +69,17 @@ body {
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
-/* ===========================
-   ICON ENTRY (GLITCH IN)
-=========================== */
+/* ICON ENTRY (GLITCH IN) */
 
 .icon-glitch-in {
   opacity: 0;
@@ -101,7 +101,7 @@ body {
   }
 
   70% {
-    filter: drop-shadow(0 0 8px rgba(34,197,94,0.7));
+    filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.7));
   }
 
   100% {
@@ -111,9 +111,7 @@ body {
   }
 }
 
-/* ===========================
-   ICON HOVER GLITCH
-=========================== */
+/* ICON HOVER GLITCH */
 
 .icon-link {
   display: inline-flex;
@@ -153,9 +151,7 @@ body {
   }
 }
 
-/* ===========================
-   LINKS / BUTTONS (UNCHANGED)
-=========================== */
+/* LINKS / BUTTONS */
 
 a {
   font-weight: 500;
@@ -188,9 +184,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* ===========================
-   LIGHT MODE
-=========================== */
+/* LIGHT MODE */
 
 @media (prefers-color-scheme: light) {
   :root {
