@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, ContactShadows } from "@react-three/drei";
 import { useRef, useState, useLayoutEffect, Suspense, useEffect } from "react";
-
+import "./App.css";
 import {
   FaGithub,
   FaEnvelope,
@@ -16,11 +16,10 @@ import {
 } from "react-icons/fa";
 
 import * as THREE from "three";
-
+import UnifiedTerminal from "./components/UnifiedTerminal";
 import BoxModel from "./components/BoxModel";
 import AnimatedBackground from "./components/AnimatedBackground";
 import PortalOverlay from "./components/PortalOverlay";
-import { TypingLine } from "./components/TerminalsUI";
 import { PANEL_DESCRIPTIONS } from "./content/panelDescriptions";
 import HackerText from "./components/HackerText";
 import GlitchText from "./components/GlitchText";
@@ -218,41 +217,13 @@ export default function App() {
              PERMANENT TERMINAL LOG (NEW)
         ======================= */}
         {portalStage === "reveal" && (
-          <div
-            style={{
-              position: "absolute",
-              top: 24,
-              left: 24,
-              width: "360px",
-              maxHeight: "70vh",
-              overflowY: "auto",
-
-              fontFamily: "monospace",
-              fontSize: 14,
-              lineHeight: 1.4,
-
-              color: theme === "dark" ? "#22c55e" : "#020617",
-
-              background: "transparent",
-              border: "none",
-              boxShadow: "none",
-              padding: 0,
-
-              pointerEvents: "none", // feels more “HUD-like”
-            }}
-          >
-            {terminalLogs.map((log, i) => (
-              <TypingLine
-                key={log.id}
-                text={log.text}
-                removing={log.removing}
-                isLast={i === terminalLogs.length - 1}
-                theme={theme}
-              />
-            ))}
-          </div>
-        )}
-
+  <UnifiedTerminal
+    theme={theme}
+    logs={terminalLogs}
+    setLogs={setTerminalLogs}
+  />
+)}
+        
         {/* PORTAL / TERMINAL OVERLAY */}
         <PortalOverlay
           stage={portalStage}
